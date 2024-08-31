@@ -1,5 +1,35 @@
-git submodule add https://github.com/cdaprod/auth-service.git auth-service
-git submodule add https://github.com/cdaprod/registry-service.git registry-service
-git submodule add https://github.com/cdaprod/storage-service.git storage-service
-git submodule add https://github.com/cdaprod/search-service.git search-service
-git submodule add https://github.com/cdaprod/invocation-service.git invocation-service
+[submodule "AUTH"]
+    path = AUTH
+    url = https://github.com/Cdaprod/auth-service
+
+[submodule "CONF"]
+    path = CONF
+    url = https://github.com/Cdaprod/config-service
+
+[submodule "INVK"]
+    path = INVK
+    url = https://github.com/Cdaprod/invocation-service
+
+[submodule "LOGS"]
+    path = LOGS
+    url = https://github.com/Cdaprod/logging-service
+
+[submodule "PROV"]
+    path = PROV
+    url = https://github.com/Cdaprod/provenance-service
+
+[submodule "REGS"]
+    path = REGS
+    url = https://github.com/Cdaprod/registry-service
+
+[submodule "SRCH"]
+    path = SRCH
+    url = https://github.com/Cdaprod/search-service
+
+[submodule "STOR"]
+    path = STOR
+    url = https://github.com/Cdaprod/storage-service
+
+[submodule "UTILS"]
+    path = UTILS
+    url = https://github.com/Cdaprod/utility-service
