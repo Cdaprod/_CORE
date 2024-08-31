@@ -1,0 +1,5 @@
+git submodule add https://github.com/cdaprod/auth-service.git auth-service
+git submodule add https://github.com/cdaprod/registry-service.git registry-service
+git submodule add https://github.com/cdaprod/storage-service.git storage-service
+git submodule add https://github.com/cdaprod/search-service.git search-service
+git submodule add https://github.com/cdaprod/invocation-service.git invocation-service
