@@ -1,35 +1,35 @@
 [submodule "AUTH"]
     path = AUTH
-    url = https://github.com/Cdaprod/auth-service
+    url = https://github.com/Cdaprod/AUTH
 
 [submodule "CONF"]
     path = CONF
-    url = https://github.com/Cdaprod/config-service
+    url = https://github.com/Cdaprod/CONF
 
 [submodule "INVK"]
     path = INVK
-    url = https://github.com/Cdaprod/invocation-service
+    url = https://github.com/Cdaprod/INVK
 
 [submodule "LOGS"]
     path = LOGS
-    url = https://github.com/Cdaprod/logging-service
+    url = https://github.com/Cdaprod/LOGS
 
 [submodule "PROV"]
     path = PROV
-    url = https://github.com/Cdaprod/provenance-service
+    url = https://github.com/Cdaprod/PROV
 
 [submodule "REGS"]
     path = REGS
-    url = https://github.com/Cdaprod/registry-service
+    url = https://github.com/Cdaprod/REGS
 
 [submodule "SRCH"]
     path = SRCH
-    url = https://github.com/Cdaprod/search-service
+    url = https://github.com/Cdaprod/SRCH
 
 [submodule "STOR"]
     path = STOR
-    url = https://github.com/Cdaprod/storage-service
+    url = https://github.com/Cdaprod/STOR
 
 [submodule "UTILS"]
     path = UTILS
-    url = https://github.com/Cdaprod/utility-service
+    url = https://github.com/Cdaprod/UTILS
