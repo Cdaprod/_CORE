@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package registryservice;
+
+// Plugin information message
+message Plugin {
+  string id = 1;             // Unique identifier for the plugin
+  string name = 2;           // Human-readable name of the plugin
+  string version = 3;        // Version of the plugin
+  map<string, string> metadata = 4; // Additional metadata about the plugin
+}
+
+// Register Plugin Request and Response
+message RegisterPluginRequest {
+  Plugin plugin = 1;  // The plugin to register
+}
+
+message RegisterPluginResponse {
+  bool success = 1;       // Indicates if the registration was successful
+  string message = 2;     // Additional message or error description
+}
+
+// Get Plugin Request and Response
+message GetPluginRequest {
+  string id = 1;          // ID of the plugin to retrieve
+}
+
+message GetPluginResponse {
+  Plugin plugin = 1;      // The requested plugin
+  bool found = 2;         // Indicates if the plugin was found
+  string message = 3;     // Additional message or error description
+}
+
+// List Plugins Request and Response
+message ListPluginsRequest {
+  string type = 1;        // Optional: Filter plugins by type
+}
+
+message ListPluginsResponse {
+  repeated Plugin plugins = 1;  // List of all registered plugins
+}
+
+// Unregister Plugin Request and Response
+message UnregisterPluginRequest {
+  string id = 1;          // ID of the plugin to unregister
+}
+
+message UnregisterPluginResponse {
+  bool success = 1;       // Indicates if the unregistration was successful
+  string message = 2;     // Additional message or error description
+}
+
+// Registry Service with plugin management RPCs
+service RegistryService {
+  rpc RegisterItem(RegisterItemRequest) returns (RegisterItemResponse);
+  rpc GetItem(GetItemRequest) returns (GetItemResponse);
+  rpc ListItems(ListItemsRequest) returns (ListItemsResponse);
+  rpc UnregisterItem(UnregisterItemRequest) returns (UnregisterItemResponse);
+
+  // Plugin management RPCs
+  rpc RegisterPlugin(RegisterPluginRequest) returns (RegisterPluginResponse);
+  rpc GetPlugin(GetPluginRequest) returns (GetPluginResponse);
+  rpc ListPlugins(ListPluginsRequest) returns (ListPluginsResponse);
+  rpc UnregisterPlugin(UnregisterPluginRequest) returns (UnregisterPluginResponse);
+}

@@ -1,0 +1,92 @@
+# _TEMP/.github/workflows/unified-temp-workflow.yml
+name: Unified TEMP Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unified-temp:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [generate-readme-tree, test-coverage, dependency-analysis, lint-code, go-fix, build, generate-callgraph]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17'
+
+      - name: Run task
+        id: run_task
+        run: |
+          case "${{ matrix.task }}" in
+            generate-readme-tree)
+              tree -L 2 -I 'node_modules|venv|.git' > dir_tree.txt
+              echo "## Directory Tree" > README.tmp
+              cat dir_tree.txt >> README.tmp
+              cat README.md >> README.tmp
+              mv README.tmp README.md
+              ;;
+            test-coverage)
+              go test ./... -coverprofile=coverage.out
+              ;;
+            dependency-analysis)
+              go list -m all > dependencies.txt
+              ;;
+            lint-code)
+              golangci-lint run ./... > lint-results.txt
+              ;;
+            go-fix)
+              go fmt ./...
+              goimports -w .
+              ;;
+            build)
+              go build -v ./...
+              ;;
+            generate-callgraph)
+              go get -u github.com/TrueFurby/go-callvis
+              mkdir -p reports
+              go-callvis -focus mypackage -group pkg,type -exclude "thirdparty|generated" mypackage > reports/callgraph.dot
+              dot -Tpng reports/callgraph.dot -o reports/callgraph.png
+              ;;
+          esac
+
+      - name: Upload Coverage to Codecov
+        if: matrix.task == 'test-coverage'
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.out
+
+      - name: Commit and push updates
+        if: |
+          (steps.run_task.outputs.success == 'true') && 
+          (matrix.task == 'generate-readme-tree' || 
+           matrix.task == 'dependency-analysis' || 
+           matrix.task == 'lint-code' ||
+           matrix.task == 'go-fix')
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add README.md dependencies.txt lint-results.txt
+          git commit -m "Auto-update by GitHub Actions for task: ${{ matrix.task }}"
+          git push
+        continue-on-error: true
+
+      - name: Display Results and Logs
+        if: failure()
+        run: |
+          echo "Task ${{ matrix.task }} failed. See logs for more details."
+          exit 1
+
+      - name: Cleanup and Finalize
+        if: always()
+        run: |
+          echo "Cleaning up workspace and finalizing."

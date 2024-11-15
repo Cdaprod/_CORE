@@ -1,0 +1,84 @@
+# _CORE/.github/workflows/core-workflow.yml
+name: Unified CORE Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  core-unified:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [update-submodules, build, test, integration-test, prepare-deployment, deploy, post-deployment-check]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17'
+
+      - name: Run task
+        id: run_task
+        run: |
+          case "${{ matrix.task }}" in
+            update-submodules)
+              git submodule update --init --recursive
+              git submodule foreach git pull origin main
+              ;;
+            build)
+              go build -v ./...
+              ;;
+            test)
+              go test ./... -coverprofile=coverage.out
+              ;;
+            integration-test)
+              go test ./integration/... -coverprofile=integration-coverage.out
+              ;;
+            prepare-deployment)
+              docker-compose build
+              ;;
+            deploy)
+              docker-compose up -d
+              ;;
+            post-deployment-check)
+              curl --fail http://localhost:8080/health || exit 1
+              ;;
+          esac
+
+      - name: Upload Coverage to Codecov
+        if: matrix.task == 'test' || matrix.task == 'integration-test'
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.out
+
+      - name: Commit and push submodule updates
+        if: |
+          (steps.run_task.outputs.success == 'true') && 
+          (matrix.task == 'update-submodules')
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "Cdaprod-GitHub Action"
+          git add .
+          git commit -m "Auto-update submodules by GitHub Actions"
+          git push
+        continue-on-error: true
+
+      - name: Display Results and Logs
+        if: failure()
+        run: |
+          echo "Task ${{ matrix.task }} failed. See logs for more details."
+          exit 1
+
+      - name: Cleanup and Finalize
+        if: always()
+        run: |
+          echo "Cleaning up workspace and finalizing."
